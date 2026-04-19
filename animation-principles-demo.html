@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Animation Principles Demo</title>
+  <style>
+    :root{
+      --bg1:#08111f;
+      --bg2:#0f1c33;
+      --panel:rgba(255,255,255,0.08);
+      --panel2:rgba(255,255,255,0.12);
+      --line:rgba(255,255,255,0.15);
+      --text:#eef4ff;
+      --muted:#b8c7e6;
+      --accent:#7dd3fc;
+      --accent2:#c084fc;
+      --good:#4ade80;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --shadow:0 18px 50px rgba(0,0,0,0.28);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(125,211,252,0.12), transparent 20%),
+        radial-gradient(circle at 80% 20%, rgba(192,132,252,0.12), transparent 22%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+    }
+
+    .container{
+      width:min(1220px, calc(100% - 24px));
+      margin:0 auto;
+      padding:20px 0 28px;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      margin-bottom:16px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .logo{
+      width:54px;
+      height:54px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg, rgba(125,211,252,0.22), rgba(192,132,252,0.22));
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      font-size:1.35rem;
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:1.3rem;
+      letter-spacing:-0.03em;
+    }
+
+    .brand p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:0.95rem;
+    }
+
+    .pill{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,0.06);
+      color:var(--muted);
+      font-size:0.92rem;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+
+    .panel{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(14px);
+    }
+
+    .hero-card{
+      padding:22px;
+    }
+
+    .hero-card h2{
+      margin:0;
+      font-size:2rem;
+      line-height:1.05;
+      letter-spacing:-0.04em;
+    }
+
+    .hero-card p{
+      margin:14px 0 0;
+      color:var(--muted);
+      line-height:1.7;
+      max-width:62ch;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .stat{
+      background:rgba(255,255,255,0.05);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+    }
+
+    .stat .num{
+      font-size:1.35rem;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+
+    .stat .txt{
+      color:var(--muted);
+      font-size:0.92rem;
+      line-height:1.45;
+    }
+
+    .info-card{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+
+    .principle-title{
+      font-size:1.15rem;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+
+    .principle-desc{
+      color:var(--muted);
+      line-height:1.7;
+      min-height:130px;
+    }
+
+    .tag-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .tag{
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.06);
+      border:1px solid var(--line);
+      color:#d8e4ff;
+      font-size:0.84rem;
+    }
+
+    .main{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:18px;
+    }
+
+    .controls{
+      padding:18px;
+    }
+
+    .controls h3{
+      margin:0 0 12px;
+      font-size:1rem;
+      color:#eaf1ff;
+    }
+
+    .principle-grid{
+      display:grid;
+      gap:10px;
+      margin-bottom:18px;
+    }
+
+    .principle-btn{
+      width:100%;
+      text-align:left;
+      padding:14px 14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,0.05);
+      color:var(--text);
+      cursor:pointer;
+      transition:0.2s ease;
+    }
+
+    .principle-btn:hover{
+      transform:translateY(-1px);
+      background:rgba(255,255,255,0.08);
+    }
+
+    .principle-btn.active{
+      background:linear-gradient(135deg, rgba(125,211,252,0.16), rgba(192,132,252,0.16));
+      border-color:rgba(125,211,252,0.3);
+    }
+
+    .principle-btn .small{
+      display:block;
+      color:var(--muted);
+      font-size:0.84rem;
+      margin-top:5px;
+      line-height:1.4;
+    }
+
+    .control-group{
+      margin-bottom:16px;
+      padding:14px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid var(--line);
+      border-radius:18px;
+    }
+
+    label{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:8px;
+      font-size:0.95rem;
+    }
+
+    .value{
+      color:var(--accent);
+      font-weight:700;
+      min-width:54px;
+      text-align:right;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:#7dd3fc;
+    }
+
+    .check{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:0.93rem;
+    }
+
+    .btn-row{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:14px;
+    }
+
+    button.action{
+      border:none;
+      border-radius:16px;
+      padding:12px 12px;
+      font:inherit;
+      font-weight:700;
+      cursor:pointer;
+      transition:0.2s ease;
+    }
+
+    .primary{
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#07111c;
+    }
+
+    .secondary{
+      background:rgba(255,255,255,0.08);
+      color:var(--text);
+      border:1px solid var(--line);
+    }
+
+    .action:hover{
+      transform:translateY(-1px);
+    }
+
+    .canvas-panel{
+      padding:16px;
+    }
+
+    .canvas-wrap{
+      position:relative;
+      border-radius:24px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+        radial-gradient(circle at 50% 15%, rgba(125,211,252,0.08), transparent 30%);
+    }
+
+    canvas{
+      display:block;
+      width:100%;
+      height:auto;
+      background:
+        linear-gradient(180deg, rgba(9,20,36,0.95), rgba(10,22,40,0.98));
+    }
+
+    .canvas-overlay{
+      position:absolute;
+      left:16px;
+      top:16px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      pointer-events:none;
+    }
+
+    .badge{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(2,8,20,0.5);
+      color:#d9e7ff;
+      font-size:0.82rem;
+      backdrop-filter:blur(10px);
+    }
+
+    .legend{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .legend-item{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,0.04);
+      color:var(--muted);
+      font-size:0.9rem;
+      line-height:1.5;
+    }
+
+    .legend-item strong{
+      display:block;
+      color:var(--text);
+      margin-bottom:4px;
+    }
+
+    .footer-note{
+      margin-top:16px;
+      color:var(--muted);
+      line-height:1.7;
+      padding:14px 16px;
+      border-radius:18px;
+      border:1px dashed rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.03);
+    }
+
+    @media (max-width: 980px){
+      .hero, .main{
+        grid-template-columns:1fr;
+      }
+      .stats, .legend{
+        grid-template-columns:1fr;
+      }
+      .btn-row{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">🎬</div>
+        <div>
+          <h1>Animation Principles Demo</h1>
+          <p>Interactive visual teaching tool for core animation concepts</p>
+        </div>
+      </div>
+      <div class="pill">HTML + CSS + JavaScript + Canvas</div>
+    </div>
+
+    <section class="hero">
+      <div class="panel hero-card">
+        <h2>See how motion becomes believable.</h2>
+        <p>
+          This demo teaches key animation principles through direct interaction.
+          Switch between principles, adjust exaggeration and speed, and watch how
+          movement changes from mechanical to expressive.
+        </p>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="num">4</div>
+            <div class="txt">Core principles included in this version</div>
+          </div>
+          <div class="stat">
+            <div class="num">Live</div>
+            <div class="txt">Animated feedback with editable controls</div>
+          </div>
+          <div class="stat">
+            <div class="num">Visual</div>
+            <div class="txt">Built for teaching motion, timing, and expression</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel info-card">
+        <div>
+          <div class="principle-title" id="infoTitle">Squash and Stretch</div>
+          <div class="principle-desc" id="infoDesc">
+            Objects deform during motion and impact. A bouncing ball stretches when moving fast and squashes when it hits the ground. This makes weight, elasticity, and energy feel convincing.
+          </div>
+        </div>
+        <div class="tag-row" id="infoTags">
+          <div class="tag">weight</div>
+          <div class="tag">impact</div>
+          <div class="tag">elasticity</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="main">
+      <aside class="panel controls">
+        <h3>Choose a principle</h3>
+
+        <div class="principle-grid">
+          <button class="principle-btn active" data-mode="squash">
+            Squash and Stretch
+            <span class="small">Bouncing ball deformation during motion and impact</span>
+          </button>
+
+          <button class="principle-btn" data-mode="anticipation">
+            Anticipation
+            <span class="small">Character prepares in the opposite direction before action</span>
+          </button>
+
+          <button class="principle-btn" data-mode="easing">
+            Timing and Easing
+            <span class="small">Compare constant speed with ease-in and ease-out motion</span>
+          </button>
+
+          <button class="principle-btn" data-mode="follow">
+            Follow-Through
+            <span class="small">Trailing parts lag behind and settle naturally</span>
+          </button>
+        </div>
+
+        <div class="control-group">
+          <label>
+            Speed
+            <span class="value" id="speedValue">1.0x</span>
+          </label>
+          <input type="range" id="speed" min="0.4" max="2.2" step="0.1" value="1.0" />
+        </div>
+
+        <div class="control-group">
+          <label>
+            Exaggeration
+            <span class="value" id="exaggerationValue">60%</span>
+          </label>
+          <input type="range" id="exaggeration" min="0" max="100" step="1" value="60" />
+        </div>
+
+        <div class="control-group">
+          <label>
+            Secondary motion
+            <span class="value" id="secondaryValue">On</span>
+          </label>
+          <div class="check">
+            <span>Enable extra visual cues</span>
+            <input type="checkbox" id="secondaryMotion" checked />
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>
+            Show guides
+            <span class="value" id="guidesValue">On</span>
+          </label>
+          <div class="check">
+            <span>Display labels and motion guides</span>
+            <input type="checkbox" id="showGuides" checked />
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="action primary" id="playPauseBtn">Pause</button>
+          <button class="action secondary" id="restartBtn">Restart</button>
+          <button class="action secondary" id="ghostBtn">Toggle Ghosts</button>
+        </div>
+
+        <div class="footer-note">
+          Tip: set exaggeration high and switch between principles to make the differences easier to explain in class.
+        </div>
+      </aside>
+
+      <div class="panel canvas-panel">
+        <div class="canvas-wrap">
+          <canvas id="demoCanvas" width="860" height="560"></canvas>
+          <div class="canvas-overlay">
+            <div class="badge" id="modeBadge">Principle: Squash and Stretch</div>
+            <div class="badge" id="hintBadge">Fast movement = stretch, impact = squash</div>
+          </div>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item">
+            <strong>What to observe</strong>
+            <span id="observeText">Look at how the shape changes before, during, and after impact.</span>
+          </div>
+          <div class="legend-item">
+            <strong>Why it matters</strong>
+            <span id="whyText">It makes motion feel physical instead of stiff.</span>
+          </div>
+          <div class="legend-item">
+            <strong>Teaching note</strong>
+            <span id="teachingText">Ask students which version feels heavier or more elastic.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("demoCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const speedInput = document.getElementById("speed");
+    const exaggerationInput = document.getElementById("exaggeration");
+    const secondaryMotionInput = document.getElementById("secondaryMotion");
+    const showGuidesInput = document.getElementById("showGuides");
+
+    const speedValue = document.getElementById("speedValue");
+    const exaggerationValue = document.getElementById("exaggerationValue");
+    const secondaryValue = document.getElementById("secondaryValue");
+    const guidesValue = document.getElementById("guidesValue");
+
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const ghostBtn = document.getElementById("ghostBtn");
+
+    const principleButtons = [...document.querySelectorAll(".principle-btn")];
+
+    const infoTitle = document.getElementById("infoTitle");
+    const infoDesc = document.getElementById("infoDesc");
+    const infoTags = document.getElementById("infoTags");
+
+    const modeBadge = document.getElementById("modeBadge");
+    const hintBadge = document.getElementById("hintBadge");
+    const observeText = document.getElementById("observeText");
+    const whyText = document.getElementById("whyText");
+    const teachingText = document.getElementById("teachingText");
+
+    let mode = "squash";
+    let playing = true;
+    let showGhosts = true;
+    let time = 0;
+    let lastTime = performance.now();
+
+    const principleInfo = {
+      squash: {
+        title: "Squash and Stretch",
+        desc: "Objects deform during motion and impact. A bouncing ball stretches when moving fast and squashes when it hits the ground. This makes weight, elasticity, and energy feel convincing.",
+        tags: ["weight", "impact", "elasticity"],
+        hint: "Fast movement = stretch, impact = squash",
+        observe: "Look at how the shape changes before, during, and after impact.",
+        why: "It makes motion feel physical instead of stiff.",
+        teaching: "Ask students which version feels heavier or more elastic."
+      },
+      anticipation: {
+        title: "Anticipation",
+        desc: "Before a major action, the character or object prepares with a smaller opposite action. This helps the audience predict what is about to happen and makes the main movement feel stronger.",
+        tags: ["preparation", "clarity", "staging"],
+        hint: "Small backward motion prepares the main action",
+        observe: "Watch the crouch or pull-back before the launch.",
+        why: "It improves readability and gives movement intention.",
+        teaching: "Ask students to compare the jump with and without preparation."
+      },
+      easing: {
+        title: "Timing and Easing",
+        desc: "Natural movement rarely starts and stops at a constant speed. Easing adds acceleration and deceleration, which makes motion feel smoother and more believable than linear movement.",
+        tags: ["timing", "speed", "acceleration"],
+        hint: "Compare linear motion with eased motion",
+        observe: "Focus on how the object begins and ends its movement.",
+        why: "Easing removes robotic movement and creates softness.",
+        teaching: "Ask which side feels more natural and why."
+      },
+      follow: {
+        title: "Follow-Through",
+        desc: "When the main body stops, flexible or attached parts continue moving and then settle. This adds realism, momentum, and secondary motion to a character or object.",
+        tags: ["momentum", "drag", "secondary motion"],
+        hint: "Trailing parts continue after the main body stops",
+        observe: "Watch the tail or ribbon lag behind and settle later.",
+        why: "It adds life and prevents motion from feeling abruptly cut off.",
+        teaching: "Ask learners to identify the main motion and the delayed motion."
+      }
+    };
+
+    function updateReadouts() {
+      speedValue.textContent = `${Number(speedInput.value).toFixed(1)}x`;
+      exaggerationValue.textContent = `${exaggerationInput.value}%`;
+      secondaryValue.textContent = secondaryMotionInput.checked ? "On" : "Off";
+      guidesValue.textContent = showGuidesInput.checked ? "On" : "Off";
+    }
+
+    function setMode(newMode) {
+      mode = newMode;
+      principleButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.mode === newMode));
+      const info = principleInfo[newMode];
+      infoTitle.textContent = info.title;
+      infoDesc.textContent = info.desc;
+      infoTags.innerHTML = info.tags.map(tag => `<div class="tag">${tag}</div>`).join("");
+      modeBadge.textContent = `Principle: ${info.title}`;
+      hintBadge.textContent = info.hint;
+      observeText.textContent = info.observe;
+      whyText.textContent = info.why;
+      teachingText.textContent = info.teaching;
+      time = 0;
+    }
+
+    principleButtons.forEach(btn => {
+      btn.addEventListener("click", () => setMode(btn.dataset.mode));
+    });
+
+    speedInput.addEventListener("input", updateReadouts);
+    exaggerationInput.addEventListener("input", updateReadouts);
+    secondaryMotionInput.addEventListener("change", updateReadouts);
+    showGuidesInput.addEventListener("change", updateReadouts);
+
+    playPauseBtn.addEventListener("click", () => {
+      playing = !playing;
+      playPauseBtn.textContent = playing ? "Pause" : "Play";
+      lastTime = performance.now();
+    });
+
+    restartBtn.addEventListener("click", () => {
+      time = 0;
+      lastTime = performance.now();
+    });
+
+    ghostBtn.addEventListener("click", () => {
+      showGhosts = !showGhosts;
+    });
+
+    updateReadouts();
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
+
+    function easeInOutCubic(t) {
+      return t < 0.5
+        ? 4 * t * t * t
+        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function easeOutBack(t) {
+      const c1 = 1.70158;
+      const c3 = c1 + 1;
+      return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+    }
+
+    function drawBackground() {
+      const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      g.addColorStop(0, "#0c1830");
+      g.addColorStop(1, "#091324");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const gridAlpha = 0.08;
+      ctx.strokeStyle = `rgba(125,211,252,${gridAlpha})`;
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= canvas.width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= canvas.height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      const floorY = canvas.height - 80;
+      ctx.fillStyle = "rgba(255,255,255,0.04)";
+      ctx.fillRect(0, floorY, canvas.width, canvas.height - floorY);
+
+      ctx.strokeStyle = "rgba(255,255,255,0.15)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, floorY);
+      ctx.lineTo(canvas.width, floorY);
+      ctx.stroke();
+    }
+
+    function drawLabel(text, x, y, color = "#dce9ff") {
+      ctx.fillStyle = color;
+      ctx.font = "600 15px Inter, sans-serif";
+      ctx.fillText(text, x, y);
+    }
+
+    function drawShadow(x, y, w, h, alpha = 0.25) {
+      ctx.save();
+      ctx.fillStyle = `rgba(0,0,0,${alpha})`;
+      ctx.beginPath();
+      ctx.ellipse(x, y, w, h, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawBall(x, y, rx, ry, color, rotation = 0, eye = false) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rotation);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(255,255,255,0.18)";
+      ctx.beginPath();
+      ctx.ellipse(-rx * 0.22, -ry * 0.22, rx * 0.28, ry * 0.22, -0.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (eye) {
+        ctx.fillStyle = "#08111f";
+        ctx.beginPath();
+        ctx.arc(-rx * 0.22, -ry * 0.08, Math.max(2, rx * 0.10), 0, Math.PI * 2);
+        ctx.arc(rx * 0.12, -ry * 0.08, Math.max(2, rx * 0.10), 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = "#08111f";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(-1, ry * 0.1, Math.max(4, rx * 0.18), 0.2, Math.PI - 0.2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawGhosts(points, rx, ry, color) {
+      if (!showGhosts) return;
+      points.forEach((p, i) => {
+        const a = (i + 1) / points.length * 0.12;
+        ctx.save();
+        ctx.globalAlpha = a;
+        drawBall(p.x, p.y, rx, ry, color);
+        ctx.restore();
+      });
+    }
+
+    function drawArrow(x1, y1, x2, y2, color = "#7dd3fc") {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      const head = 9;
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - head * Math.cos(angle - 0.35), y2 - head * Math.sin(angle - 0.35));
+      ctx.lineTo(x2 - head * Math.cos(angle + 0.35), y2 - head * Math.sin(angle + 0.35));
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawSquashStretch(t, ex, guides) {
+      const floorY = canvas.height - 80;
+      const left = canvas.width * 0.5;
+      const baseR = 38;
+      const bounceHeight = 250;
+      const cycle = (t * 0.55) % 1;
+      const yNorm = Math.abs(Math.sin(cycle * Math.PI));
+      const y = floorY - baseR - yNorm * bounceHeight;
+
+      const impactZone = Math.pow(1 - yNorm, 4);
+      const stretchZone = clamp((1 - impactZone) * Math.abs(Math.cos(cycle * Math.PI)), 0, 1);
+      const exaggeration = ex * 0.55;
+
+      let rx = baseR * (1 + impactZone * exaggeration * 0.9 - stretchZone * exaggeration * 0.2);
+      let ry = baseR * (1 - impactZone * exaggeration * 0.5 + stretchZone * exaggeration * 0.7);
+
+      drawShadow(left, floorY + 10, 44 + impactZone * 40, 10 + impactZone * 4, 0.18 + impactZone * 0.16);
+
+      const ghosts = [];
+      for (let i = 1; i <= 6; i++) {
+        const tt = cycle - i * 0.05;
+        const p = ((tt % 1) + 1) % 1;
+        const yyNorm = Math.abs(Math.sin(p * Math.PI));
+        ghosts.push({ x: left, y: floorY - baseR - yyNorm * bounceHeight });
+      }
+      drawGhosts(ghosts, baseR, baseR, "#7dd3fc");
+
+      drawBall(left, y, rx, ry, "#7dd3fc", 0, secondaryMotionInput.checked);
+
+      if (guides) {
+        drawLabel("Ground", 24, floorY - 12);
+        drawArrow(left + 80, y - 10, left + 80, floorY - baseR, "#fbbf24");
+        drawLabel("Impact compression", left + 94, floorY - baseR - 8, "#fbbf24");
+      }
+    }
+
+    function drawAnticipation(t, ex, guides) {
+      const floorY = canvas.height - 80;
+      const xStart = 130;
+      const xEnd = canvas.width - 150;
+      const bodyBaseY = floorY - 44;
+      const cycle = (t * 0.25) % 1;
+      const anticipationPart = 0.22;
+      const jumpPart = 0.48;
+      const settlePart = 0.30;
+      const exaggeration = ex * 0.8;
+
+      let x = xStart;
+      let y = bodyBaseY;
+      let stretchY = 1;
+      let stretchX = 1;
+
+      if (cycle < anticipationPart) {
+        const p = cycle / anticipationPart;
+        x = xStart - 45 * p * exaggeration;
+        y = bodyBaseY + 34 * p * exaggeration;
+        stretchX = 1 + 0.28 * p * exaggeration;
+        stretchY = 1 - 0.28 * p * exaggeration;
+      } else if (cycle < anticipationPart + jumpPart) {
+        const p = (cycle - anticipationPart) / jumpPart;
+        const ep = easeOutBack(clamp(p, 0, 1));
+        x = lerp(xStart - 45 * exaggeration, xEnd, ep);
+        const arc = Math.sin(p * Math.PI) * 150 * (0.7 + ex * 0.4);
+        y = bodyBaseY - arc;
+        stretchX = 1 - 0.18 * (1 - p);
+        stretchY = 1 + 0.35 * (1 - p);
+      } else {
+        const p = (cycle - anticipationPart - jumpPart) / settlePart;
+        x = xEnd;
+        y = bodyBaseY + Math.sin(p * Math.PI) * 10 * (1 - p);
+        stretchX = 1 + 0.14 * Math.sin(p * Math.PI);
+        stretchY = 1 - 0.14 * Math.sin(p * Math.PI);
+      }
+
+      drawShadow(x, floorY + 10, 46, 10, 0.24);
+
+      const ghosts = [];
+      for (let i = 1; i <= 6; i++) {
+        const tt = cycle - i * 0.04;
+        const p = ((tt % 1) + 1) % 1;
+        let gx = xStart;
+        let gy = bodyBaseY;
+        if (p < anticipationPart) {
+          const a = p / anticipationPart;
+          gx = xStart - 45 * a * exaggeration;
+          gy = bodyBaseY + 34 * a * exaggeration;
+        } else if (p < anticipationPart + jumpPart) {
+          const a = (p - anticipationPart) / jumpPart;
+          gx = lerp(xStart - 45 * exaggeration, xEnd, easeOutBack(clamp(a, 0, 1)));
+          gy = bodyBaseY - Math.sin(a * Math.PI) * 150 * (0.7 + ex * 0.4);
+        } else {
+          gx = xEnd;
+          gy = bodyBaseY;
+        }
+        ghosts.push({ x: gx, y: gy });
+      }
+      drawGhosts(ghosts, 34, 34, "#c084fc");
+
+      drawBall(x, y, 34 * stretchX, 34 * stretchY, "#c084fc", 0, true);
+
+      if (secondaryMotionInput.checked) {
+        ctx.strokeStyle = "rgba(255,255,255,0.35)";
+        ctx.lineWidth = 5;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(x - 12, y + 24);
+        ctx.lineTo(x - 26, y + 55);
+        ctx.moveTo(x + 12, y + 24);
+        ctx.lineTo(x + 26, y + 55);
+        ctx.stroke();
+      }
+
+      if (guides) {
+        drawLabel("Anticipation", xStart - 48, floorY - 94, "#fbbf24");
+        drawArrow(xStart + 10, bodyBaseY + 12, xStart - 40, bodyBaseY + 40, "#fbbf24");
+        drawLabel("Main action", canvas.width - 250, floorY - 170, "#7dd3fc");
+        drawArrow(canvas.width - 280, floorY - 150, canvas.width - 180, floorY - 150, "#7dd3fc");
+      }
+    }
+
+    function drawEasing(t, ex, guides) {
+      const floorY = canvas.height - 110;
+      const topY = 170;
+      const startX = 120;
+      const endX = canvas.width - 120;
+      const cycle = (t * 0.22) % 1;
+
+      const linearX = lerp(startX, endX, cycle);
+      const easedX = lerp(startX, endX, easeInOutCubic(cycle));
+
+      if (showGhosts) {
+        for (let i = 1; i <= 8; i++) {
+          const p = clamp(cycle - i * 0.08, 0, 1);
+          ctx.save();
+          ctx.globalAlpha = 0.05 + i * 0.008;
+          drawBall(lerp(startX, endX, p), topY, 28, 28, "#fb7185");
+          drawBall(lerp(startX, endX, easeInOutCubic(p)), floorY, 28, 28, "#4ade80");
+          ctx.restore();
+        }
+      }
+
+      drawBall(linearX, topY, 30, 30, "#fb7185", 0, false);
+      drawBall(easedX, floorY, 30, 30, "#4ade80", 0, false);
+
+      ctx.strokeStyle = "rgba(255,255,255,0.14)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(startX, topY);
+      ctx.lineTo(endX, topY);
+      ctx.moveTo(startX, floorY);
+      ctx.lineTo(endX, floorY);
+      ctx.stroke();
+
+      ctx.fillStyle = "#dce9ff";
+      ctx.font = "700 17px Inter, sans-serif";
+      ctx.fillText("Linear", 40, topY + 5);
+      ctx.fillText("Ease In / Ease Out", 40, floorY + 5);
+
+      if (secondaryMotionInput.checked) {
+        const barX = canvas.width - 160;
+        const barY = 90;
+        const w = 120;
+        const h = 300;
+
+        ctx.strokeStyle = "rgba(255,255,255,0.16)";
+        ctx.strokeRect(barX, barY, w, h);
+
+        const markerY = barY + h * cycle;
+        const easeMarkerY = barY + h * easeInOutCubic(cycle);
+
+        ctx.fillStyle = "#fb7185";
+        ctx.fillRect(barX + 20, markerY - 6, 28, 12);
+
+        ctx.fillStyle = "#4ade80";
+        ctx.fillRect(barX + 72, easeMarkerY - 6, 28, 12);
+
+        drawLabel("Speed map", barX + 14, barY - 12);
+      }
+
+      if (guides) {
+        drawLabel("Constant speed", 200, topY - 28, "#fb7185");
+        drawLabel("Slow start, fast middle, slow end", 200, floorY - 28, "#4ade80");
+      }
+    }
+
+    function drawFollowThrough(t, ex, guides) {
+      const floorY = canvas.height - 110;
+      const centerY = floorY - 120;
+      const startX = 140;
+      const endX = canvas.width - 220;
+      const cycle = (t * 0.26) % 1;
+      const exaggeration = 0.35 + ex * 0.85;
+
+      let bodyX;
+      if (cycle < 0.56) {
+        bodyX = lerp(startX, endX, easeInOutCubic(cycle / 0.56));
+      } else {
+        bodyX = endX;
+      }
+
+      drawShadow(bodyX, floorY + 25, 55, 12, 0.22);
+
+      const segments = 8;
+      const segLength = 24;
+      const points = [{ x: bodyX, y: centerY }];
+
+      const wave = Math.sin(t * 1.8) * 0.7;
+      for (let i = 1; i <= segments; i++) {
+        const lag = i * (0.16 + ex * 0.18);
+        const a = Math.sin((t * 1.8) - lag) * wave;
+        const angle = a * exaggeration + i * 0.05;
+        const prev = points[i - 1];
+        points.push({
+          x: prev.x - Math.cos(angle) * segLength,
+          y: prev.y + Math.sin(angle) * segLength
+        });
+      }
+
+      if (showGhosts) {
+        for (let g = 1; g <= 5; g++) {
+          const gt = t - g * 0.18;
+          let ghostBodyX;
+          const ghostCycle = (gt * 0.26) % 1;
+          if (ghostCycle < 0.56) {
+            ghostBodyX = lerp(startX, endX, easeInOutCubic(ghostCycle / 0.56));
+          } else {
+            ghostBodyX = endX;
+          }
+          ctx.save();
+          ctx.globalAlpha = 0.035 + g * 0.015;
+          drawBall(ghostBodyX, centerY, 38, 38, "#fbbf24");
+          ctx.restore();
+        }
+      }
+
+      drawBall(bodyX, centerY, 38, 38, "#fbbf24", 0, true);
+
+      ctx.lineCap = "round";
+      for (let i = 0; i < segments; i++) {
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        ctx.strokeStyle = `rgba(125,211,252,${0.88 - i * 0.07})`;
+        ctx.lineWidth = 13 - i;
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+
+      if (secondaryMotionInput.checked) {
+        const ribbon = points[points.length - 1];
+        ctx.strokeStyle = "rgba(192,132,252,0.8)";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(ribbon.x, ribbon.y);
+        ctx.quadraticCurveTo(ribbon.x - 24, ribbon.y + 10, ribbon.x - 58, ribbon.y - 14);
+        ctx.stroke();
+      }
+
+      if (guides) {
+        drawLabel("Main body stops first", bodyX - 20, centerY - 62, "#fbbf24");
+        drawArrow(bodyX - 10, centerY - 45, bodyX - 2, centerY - 4, "#fbbf24");
+
+        const tailMid = points[4];
+        drawLabel("Trailing motion continues", tailMid.x - 44, tailMid.y - 44, "#7dd3fc");
+        drawArrow(tailMid.x - 8, tailMid.y - 28, tailMid.x, tailMid.y, "#7dd3fc");
+      }
+    }
+
+    function drawScene() {
+      drawBackground();
+
+      const guides = showGuidesInput.checked;
+      const ex = Number(exaggerationInput.value) / 100;
+
+      switch (mode) {
+        case "squash":
+          drawSquashStretch(time, ex, guides);
+          break;
+        case "anticipation":
+          drawAnticipation(time, ex, guides);
+          break;
+        case "easing":
+          drawEasing(time, ex, guides);
+          break;
+        case "follow":
+          drawFollowThrough(time, ex, guides);
+          break;
+      }
+    }
+
+    function animate(now) {
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+
+      if (playing) {
+        time += dt * Number(speedInput.value);
+      }
+
+      drawScene();
+      requestAnimationFrame(animate);
+    }
+
+    setMode("squash");
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
